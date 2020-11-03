@@ -31,3 +31,10 @@ So the expected typical structure of a unit of work
 6. Close expectation block
 
 If an error occurs in steps 1-4 then the commit will be skipped returning an error "Expectation failed: no_error". If the commit fails, then that will return an error. 
+
+
+## TODO
+
+- [ ] SELECTs. No SELECT support atm.
+- [ ] Save IDs from LAST_INSERT_ID() into session variables so can insert rows into multiple tables in one UoW. No protobuf method using mysql's xprotocol for SET instructions so this would have to regular SQL & StmtExecute.
+- [ ] More/better pool implementations.
