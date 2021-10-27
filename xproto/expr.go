@@ -421,3 +421,15 @@ func AppendExprPlaceholder(p []byte, tag uint8, pos uint32) ([]byte, error) {
 	p[n-1] &= 0x7F
 	return p[:n], nil
 }
+
+func AppendExprVariable(p []byte, tag uint8, name string) ([]byte, error) {
+	x := len(name)
+	n := sizeVarint(uint(x))
+	p = append(p, tag<<3|wireBytes, 3+byte(n+x),
+		tagExprType<<3|wireVarint, byte(mysqlx_expr.Expr_VARIABLE),
+		tagExprVariable<<3|wireBytes, byte(x)|0x80, byte(x>>7)|0x80, byte(x>>14)|0x80, byte(x>>21)|0x80, byte(x>>28)|0x80,
+		byte(x>>35)|0x80, byte(x>>42)|0x80, byte(x>>49)|0x80, byte(x>>56)|0x80, 1)
+	n += len(p) - binary.MaxVarintLen64
+	p[n-1] &= 0x7F
+	return append(p[:n], name...), nil
+}
