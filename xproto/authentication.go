@@ -55,7 +55,7 @@ func AuthenticateStart(p []byte, mechName string, authData []byte) []byte {
 	if len(authData) > 0 {
 		p = appendWireBytes(p, tagAuthenticateStartAuthData, authData)
 	}
-	binary.LittleEndian.PutUint32(p[:], uint32(len(p)-4))
+	binary.LittleEndian.PutUint32(p, uint32(len(p)-4))
 	return p
 }
 
@@ -65,6 +65,6 @@ func AuthenticateContinue(p []byte, authData []byte) []byte {
 	)
 	p = append(p[len(p):], 0, 0, 0, 0, byte(mysqlx.ClientMessages_SESS_AUTHENTICATE_CONTINUE))
 	p = appendWireBytes(p, tagAuthenticateContinueAuthData, authData)
-	binary.LittleEndian.PutUint32(p[:], uint32(len(p)-4))
+	binary.LittleEndian.PutUint32(p, uint32(len(p)-4))
 	return p
 }
