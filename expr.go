@@ -408,14 +408,14 @@ func DateSub(a, b interface{}, c DateUnit) exprFunc {
 
 // Functions
 
-// LastInsertID invokes MySQL's CONCAT() function. See
+// Concat invokes MySQL's CONCAT() function. See
 func Concat(a ...interface{}) exprFunc {
 	return func(p []byte, tag uint8) ([]byte, error) {
 		return xproto.AppendExprFunctionCall(p, tag, "CONCAT", a)
 	}
 }
 
-// LastInsertID invokes MySQL's ROW_COUNT() function. See https://dev.mysql.com/doc/refman/8.0/en/information-functions.html#function_row-count
+// RowCount invokes MySQL's ROW_COUNT() function. See https://dev.mysql.com/doc/refman/8.0/en/information-functions.html#function_row-count
 func RowCount() exprFunc {
 	return func(p []byte, tag uint8) ([]byte, error) {
 		return xproto.AppendExprFunctionCallV(p, tag, "ROW_COUNT")
