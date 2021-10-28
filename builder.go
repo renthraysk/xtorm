@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/renthraysk/xtorm/netx"
 	"github.com/renthraysk/xtorm/xproto"
@@ -28,11 +29,17 @@ type Builder struct {
 }
 
 func (b *Builder) call(f func(b *Builder) error) {
-	child := *b
+
+	var child = Builder{
+		buf:      b.buf,
+		err:      b.err,
+		disabled: false,
+	}
 	b.disabled = true
 	f(&child)
+	b.buf = child.buf
+	b.err = child.err
 	b.disabled = false
-	*b = child
 }
 
 type OpenContext uint8
@@ -120,6 +127,30 @@ func (b *Builder) Insert(name string, columns []string, data [][]interface{}) {
 		}
 	}
 	binary.LittleEndian.PutUint32(b.buf[n:], uint32(len(b.buf)-n-4))
+}
+
+func (b *Builder) InsertRow(name string, columns []string, row []interface{}) xproto.AppendExprFunc {
+
+	if b.disabled {
+		panic("InsertID called on non child")
+	}
+	if b.err != nil {
+		return nil
+	}
+	n := len(b.buf)
+	b.buf = xproto.Insert(b.buf, name, columns)
+	b.buf, b.err = xproto.AppendInsertRow(b.buf, row)
+	if b.err != nil {
+		return nil
+	}
+	binary.LittleEndian.PutUint32(b.buf[n:], uint32(len(b.buf)-n-4))
+
+	// Generate unique variable name to store the last insert id() in.
+	id := "@id$" + strconv.Itoa(len(b.buf))
+	b.StmtExecute("SET " + id + " = LAST_INSERT_ID()")
+	return func(p []byte, tag uint8) ([]byte, error) {
+		return xproto.AppendExprVariable(p, tag, id)
+	}
 }
 
 func (b *Builder) Update(name string, criteria exprFunc, set map[string]interface{}) {

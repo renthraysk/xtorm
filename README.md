@@ -36,5 +36,5 @@ If an error occurs in steps 1-4 then the commit will be skipped returning an err
 ## TODO
 
 - [ ] SELECTs. No SELECT support atm.
-- [ ] Save IDs from LAST_INSERT_ID() into session variables so can insert rows into multiple tables in one UoW. No protobuf method using mysql's xprotocol for SET instructions so this would have to regular SQL & StmtExecute.
+- [ ] Save IDs from LAST_INSERT_ID() into variables so can insert rows into multiple tables in one UoW. No protobuf method using mysql's xprotocol for SET instructions so this would have to be regular SQL & StmtExecute. Expr Variables are currently not supported in MySQL 8.0.27. "ERROR 5153 (HY000): Mysqlx::Expr::Expr::VARIABLE is not supported yet"
 - [ ] More/better pool implementations.

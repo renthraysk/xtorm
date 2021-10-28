@@ -158,13 +158,17 @@ func TestUpdateExecution(t *testing.T) {
 }
 
 func TestLastInsertID(t *testing.T) {
+	//ERROR 5153 (HY000): Mysqlx::Expr::Expr::VARIABLE is not supported yet
+	t.Skip("Mysqlx::Expr::Expr::VARIABLE is currently unsupported in MySQL's X plugin")
 
 	x := New(bufferSize)
 
 	x.ExpectFailOnError(OpenExpectCtxEmpty, func(b *Builder) error {
 		b.Tx(IsolationLevelDefault, func(b *Builder) error {
-			b.Insert("xml", []string{"xml"}, [][]interface{}{{XMLString("<test></test>")}})
-			b.Insert("xmlchild", []string{"xmlid", "value"}, [][]interface{}{{LastInsertID(), "xml fk"}})
+			// Insert row capturing the LAST_INSERT_ID()
+			xmlID := b.InsertRow("xml", []string{"xml"}, []interface{}{XMLString("<test></test>")})
+			// Insert child row, using the LAST_INSERT_ID() from above.
+			b.InsertRow("xmlchild", []string{"xmlid", "value"}, []interface{}{xmlID, "xml fk"})
 			return nil
 		})
 		return nil
