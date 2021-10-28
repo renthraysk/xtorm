@@ -73,7 +73,7 @@ func appendAnyUint64(p []byte, tag uint8, x uint64) []byte {
 		tagAnyScalar<<3|wireBytes, 3+byte(n),
 		tagScalarType<<3|wireVarint, byte(mysqlx_datatypes.Scalar_V_UINT),
 		tagScalarUint<<3|wireVarint, byte(x)|0x80, byte(x>>7)|0x80, byte(x>>14)|0x80, byte(x>>21)|0x80, byte(x>>28)|0x80,
-		byte(x>>35)|0x80, byte(x>>42)|0x80, byte(x>>49)|0x80, byte(x>>56)|0x80, 1)
+		byte(x>>35)|0x80, byte(x>>42)|0x80, byte(x>>49)|0x80, byte(x>>56), 1)
 	n += len(p) - binary.MaxVarintLen64
 	p[n-1] &= 0x7F
 	return p[:n]
@@ -131,7 +131,7 @@ func appendAnyInt64(p []byte, tag uint8, v int64) []byte {
 		tagAnyScalar<<3|wireBytes, 3+byte(n),
 		tagScalarType<<3|wireVarint, byte(mysqlx_datatypes.Scalar_V_SINT),
 		tagScalarSint<<3|wireVarint, byte(x)|0x80, byte(x>>7)|0x80, byte(x>>14)|0x80, byte(x>>21)|0x80, byte(x>>28)|0x80,
-		byte(x>>35)|0x80, byte(x>>42)|0x80, byte(x>>49)|0x80, byte(x>>56)|0x80, 1)
+		byte(x>>35)|0x80, byte(x>>42)|0x80, byte(x>>49)|0x80, byte(x>>56), 1)
 	n += len(p) - binary.MaxVarintLen64
 	p[n-1] &= 0x7F
 	return p[:n]
